@@ -1,0 +1,57 @@
+// Colors
+
+$black: hsl(0, 0%, 4%) !default;
+$black-bis: #1a202c !default;
+$black-ter: #2d3748 !default;
+
+$grey-darker: #2d3748 !default;
+$grey-dark: #4a5568 !default;
+$grey: #a0aec0 !default;
+$grey-light: #edf2f7 !default;
+$grey-lighter: #f7fafc !default;
+
+$white-ter: #f7f7f7 !default;
+$white-bis: hsl(0, 0%, 98%) !default;
+$white: hsl(0, 0%, 100%) !default;
+
+$orange: #ff745b !default;
+$yellow: #f8991a !default;
+$green: #0b8944;
+$turquoise: #38b2ac !default;
+$cyan: #4299e1 !default;
+$blue: #2b6cb0;
+$purple: #564dcb !default;
+$red:  tomato !default;
+$blue-darkest: #254e70;
+
+// Typography
+
+$family-sans-serif: Poppins, BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell",
+  "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif !default;
+  $family-francois: 'Francois One', sans-serif;
+$family-monospace: monospace !default;
+$render-mode: optimizeLegibility !default;
+
+$size-1: 3rem !default;
+$size-2: 2.5rem !default;
+$size-3: 2rem !default;
+$size-4: 1.5rem !default;
+$size-5: 1.25rem !default;
+$size-6: 1rem !default;
+$size-7: 0.75rem !default;
+
+// Generic Variables
+
+$body-size: 14px;
+
+$primary: $red;
+$link: $blue-darkest;
+$info: $red;
+$success: $green;
+$warning: $yellow;
+$danger: $red;
+$dark: $black-bis;
+$text: $grey-dark;
+$light: #bee3f8;
+
+$body-background-color: $white-ter;

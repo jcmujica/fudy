@@ -1,0 +1,27 @@
+body, .App {
+  min-height: 100vh;
+}
+
+.auth__fullHeight {
+  min-height: 100vh;
+}
+.auth__logoContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 15px;
+}
+.auth__container {
+  padding: 50px;
+  border-radius: 15px;
+}
+.auth__submit {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}
+.auth__labels {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}

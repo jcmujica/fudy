@@ -1,35 +1,39 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 const { ObjectId } = mongoose.Schema;
 
-const recipeSchema = new mongoose.Schema(
+const IngredientListSchema = new mongoose.Schema(
+    {
+        ingredient: { type: Schema.ObjectId, ref: "Ingredient" },
+        name: String,
+        amount: Number,
+        unit: String
+    },
+    { timestamps: true }
+);
+
+const IngredientList = mongoose.model("IngredientList", IngredientListSchema);
+
+const RecipeSchema = new mongoose.Schema(
     {
         name: {
             type: String,
             trim: true,
             required: true,
-            maxlength: 32
+            maxlength: 64
         },
-        type: {
+        instructions: {
             type: String,
             trim: true,
             required: true,
-            maxlength: 32
+            maxlength: 10000
         },
-        category: {
-            type: ObjectId,
-            ref: "Category",
-            required: true
-        },
-        photo: {
-            data: Buffer,
-            contentType: String
-        },
-        shipping: {
-            required: false,
-            type: Boolean
-        }
+        ingredients: [IngredientListSchema]
     },
     { timestamps: true }
 );
 
-module.exports = mongoose.model("Recipe", recipeSchema);
+const Recipe = mongoose.model("Recipe", RecipeSchema);
+
+module.exports = { Recipe, IngredientList };
+

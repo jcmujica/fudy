@@ -11,6 +11,7 @@ require("dotenv").config();
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
 const ingredientRoutes = require("./routes/ingredient");
+const recipeRoutes = require("./routes/recipe");
 // const productRoutes = require("./routes/product");
 // const braintreeRoutes = require("./routes/braintree");
 // const orderRoutes = require("./routes/order");
@@ -37,7 +38,7 @@ app.use(cors());
 app.use("/api", authRoutes);
 app.use("/api", userRoutes);
 app.use("/api", ingredientRoutes);
-// app.use("/api", productRoutes);
+app.use("/api", recipeRoutes);
 // app.use("/api", braintreeRoutes);
 // app.use("/api", orderRoutes);
 

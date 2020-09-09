@@ -28,6 +28,22 @@ export const createIngredients = (userId, token, ingredientData) => {
         });
 };
 
+export const createRecipes = (userId, token, recipeData) => {
+    return fetch(`${API}/recipe/create/${userId}`, {
+        method: "POST",
+        headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`
+        },
+        body: recipeData
+    })
+        .then(response => {
+            return response.json();
+        })
+        .catch(err => {
+            console.log(err);
+        });
+};
 
 export const updateIngredient = (ingredientId, userId, token, ingredientData) => {
     return fetch(`${API}/ingredient/${ingredientId}/${userId}`, {

@@ -1,53 +1,90 @@
 import React, { useState, useEffect } from 'react';
-import { getIngredients } from "../../core/apiCore";
+import { isAuthenticated } from "../../auth";
+import { getIngredients, createRecipes } from "../../core/apiCore";
 import Loader from '../Loader';
 
 function CreateRecipe(props) {
     const { mode } = props;
-
-    const [values, setValues] = useState({});
+    const userId = isAuthenticated() && isAuthenticated().user._id;
+    const token = isAuthenticated() && isAuthenticated().token;
+    const [values, setValues] = useState({
+        formData: ""
+    });
     const [allIngredients, setAllIngredients] = useState([]);
+    const [shownIngredients, setShownIngredients] = useState([]);
     const [recipeIngredients, setRecipeIngredients] = useState([]);
-    const { mappedFields, formData } = values;
+    const { formData } = values;
     const fields = [
         { type: 'text', name: 'name', placeholder: 'Name', required: true },
         { type: 'textarea', name: 'instructions', placeholder: 'Instructions', required: true }
     ];
+    const allUnits = [
+        { value: '' },
+        { value: 'Tea Spoon' },
+        { value: 'Cup' },
+        { value: 'Grams' },
+        { value: 'Unit' },
+        { value: 'l' },
+        { value: 'ml' },
+    ];
 
     useEffect(() => {
+        setValues({
+            ...values,
+            formData: new FormData()
+        });
         getIngredients()
-            .then(res => setAllIngredients(res))
+            .then(res => {
+                setAllIngredients(res)
+                setShownIngredients(res)
+            })
     }, []);
 
     useEffect(() => {
-        const idsAlreadyAdded = recipeIngredients.map(el => el._id);
-        console.log('ids already added', idsAlreadyAdded)
+        const idsAlreadyAdded = recipeIngredients.map(el => el.id);
         const filteredIngredients = allIngredients.filter(el => !idsAlreadyAdded.includes(el._id));
-        // console.log(filteredIngredients)
-        setAllIngredients(filteredIngredients)
+        setShownIngredients(filteredIngredients);
     }, [recipeIngredients]);
 
-    const handleChange = name => event => {
+    const handleChange = (name, id) => event => {
         const value = name === "photo" ? event.target.files[0] : event.target.value;
-        if (name === "origin") {
-            setValues({ ...values, origin: value });
+        if (name === "unit" || name === "amount") {
+            const foundIndex = recipeIngredients.findIndex(ingredient => ingredient.id === id);
+            if (foundIndex >= 0) {
+                const copyIngredients = [...recipeIngredients];
+                copyIngredients[foundIndex][name] = value;
+                setRecipeIngredients(copyIngredients);
+            }
         } else {
             setValues({ ...values, [name]: value });
         }
     };
 
-    const beforeSubmit = () => {
-        mappedFields.map((field) => {
-            formData.set(field, values[field]);
-        });
+    const validateIngredientValues = (list) => {
+        return list.map(element => Object.values(element).map((el) => el ? true : false)).flat().every(el => el === true);
     };
 
-    const addIngredient = (e) => {
-        e.stopPropagation();
-        const id = e.currentTarget.id;
-        const selectedIngredient = findIngredient(id);
-        console.log(selectedIngredient);
-        setRecipeIngredients([...recipeIngredients, selectedIngredient]);
+    const beforeSubmit = () => {
+        if (!validateIngredientValues) {
+            alert('All ingredients must contain all their respective values.');
+            return;
+        };
+        formData.set('ingredients', JSON.stringify(recipeIngredients));
+        fields.map((field) => {
+            formData.set(field.name, values[field.name]);
+        });
+        console.log('FORM DATA', formData)
+    };
+
+    const addIngredient = (id) => {
+        const foundIngredient = findIngredient(id);
+        setRecipeIngredients([...recipeIngredients,
+        {
+            name: foundIngredient.name,
+            id: id,
+            amount: 0,
+            unit: ''
+        }]);
     };
 
     const findIngredient = (id) => {
@@ -60,14 +97,14 @@ function CreateRecipe(props) {
         setValues({ ...values, error: false, loading: true });
 
         if (mode === 'create') {
-            // createRecipes(userId, token, formData)
-            //     .then(data => {
-            //         if (data.error) {
-            //             setValues({ ...values, error: data.error, loading: false });
-            //         } else {
-            //             console.log(data);
-            //         }
-            //     });
+            createRecipes(userId, token, formData)
+                .then(data => {
+                    if (data.error) {
+                        setValues({ ...values, error: data.error, loading: false });
+                    } else {
+                        console.log(data);
+                    }
+                });
         } else {
             // updateRecipe(selectedRecipe._id, userId, token, formData)
             // .then(data => {
@@ -79,6 +116,22 @@ function CreateRecipe(props) {
             //     }
             // );
         }
+    };
+
+    const findIngredientValue = (id, value) => {
+        console.log(id)
+        console.log('values', values)
+        const foundIngredient = recipeIngredients.find(ingredient => ingredient.id === id);
+        return foundIngredient[value];
+    };
+
+    const findUnitValue = (unitString) => {
+        return allUnits.find(unit => unit.value === unitString);
+    };
+
+    const deleteIngredientHandler = (id) => {
+        const clearedIngredientsOnList = recipeIngredients.filter(ingredient => ingredient.id !== id);
+        setRecipeIngredients(clearedIngredientsOnList);
     };
 
     return (
@@ -126,25 +179,25 @@ function CreateRecipe(props) {
                                     <th className="is-narrow">Ingredient</th>
                                     <th className="is-narrow">Amount</th>
                                     <th className="is-narrow">Unit</th>
+                                    <th className="is-narrow">Remove</th>
                                 </tr>
                             </thead>
                             <tbody>
-
-                                {recipeIngredients && recipeIngredients.map((ingredient) => (
-                                    <tr key={ingredient._id}>
+                                {recipeIngredients.map((ingredient) => (
+                                    <tr key={ingredient.id}>
                                         <td>{ingredient.name}</td>
-                                        <td><input type="number"/></td>
+                                        <td><input type="number" value={ingredient.amount} onChange={handleChange('amount', ingredient.id)} /></td>
                                         <td>
-                                            <select>
-                                                <option>Tea Spoon</option>
-                                                <option>Cup</option>
-                                                <option>Grams</option>
+                                            <select value={ingredient.unit} onChange={handleChange('unit', ingredient.id)} required>
+                                                {allUnits.map(unit => (
+                                                    <option>{unit.value}</option>
+                                                ))}
                                             </select>
                                         </td>
+                                        <td onClick={() => deleteIngredientHandler(ingredient.id)}>X</td>
                                     </tr>
                                 ))}
                             </tbody>
-
                         </table>
                     </form>
                 </div>
@@ -156,9 +209,9 @@ function CreateRecipe(props) {
                             </tr>
                         </thead>
                         <tbody>
-                            {allIngredients ?
-                                allIngredients.map((ingredient => (
-                                    <tr onClick={addIngredient} id={ingredient._id} key={ingredient._id}>
+                            {shownIngredients ?
+                                shownIngredients.map((ingredient => (
+                                    <tr onClick={() => addIngredient(ingredient._id)} key={ingredient._id}>
                                         <th className="is-narrow">{ingredient.name}</th>
                                     </tr>
                                 )))

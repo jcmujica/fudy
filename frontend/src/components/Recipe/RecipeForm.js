@@ -73,6 +73,7 @@ function CreateRecipe(props) {
         fields.map((field) => {
             formData.set(field.name, values[field.name]);
         });
+        formData.set('user', userId);
         console.log('FORM DATA', formData)
     };
 

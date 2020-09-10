@@ -4,13 +4,11 @@ const { ObjectId } = mongoose.Schema;
 
 const IngredientListSchema = new mongoose.Schema(
     {
-        ingredient: { type: Schema.ObjectId, ref: "Ingredient" },
-        name: String,
-        amount: Number,
-        unit: String
-    },
-    { timestamps: true }
-);
+        ingredient: { type: ObjectId, ref: "Ingredient" },
+        name: { type: String },
+        amount: { type: Number },
+        unit: { type: String }
+    });
 
 const IngredientList = mongoose.model("IngredientList", IngredientListSchema);
 
@@ -28,7 +26,8 @@ const RecipeSchema = new mongoose.Schema(
             required: true,
             maxlength: 10000
         },
-        ingredients: [IngredientListSchema]
+        ingredients: [IngredientListSchema],
+        user: { type: ObjectId, ref: "User" }
     },
     { timestamps: true }
 );

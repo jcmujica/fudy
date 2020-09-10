@@ -1,20 +1,55 @@
 const formidable = require("formidable");
 const _ = require("lodash");
 const fs = require("fs");
-const Recipe = require("../models/recipe");
+const { Recipe } = require("../models/recipe");
 const { errorHandler } = require("../helpers/dbErrorHandler");
 
 
 exports.create = (req, res) => {
-    // console.log("CREATE ORDER: ", req.body);
-    req.body.recipe.user = req.profile;
-    const recipe = new Order(req.body.recipe);
-    recipe.save((error, data) => {
-        if (error) {
+    let form = new formidable.IncomingForm();
+    form.keepExtensions = true;
+    form.parse(req, (err, fields, files) => {
+        if (err) {
             return res.status(400).json({
-                error: errorHandler(error)
+                error: "Image could not be uploaded"
             });
         }
-        res.json(data);
+        // check for all fields
+        const {
+            name,
+            instructions,
+            ingredients,
+            user
+        } = fields;
+
+        if (!name || !instructions || !ingredients || !user) {
+            return res.status(400).json({
+                error: "All fields are required"
+            });
+        };
+
+        fields.ingredients = JSON.parse(ingredients);
+
+        let recipe = new Recipe(fields);
+
+        if (files.photo) {
+            console.log("FILES PHOTO: ", files.photo);
+            if (files.photo.size > 1000000) {
+                return res.status(400).json({
+                    error: "Image should be less than 1mb in size"
+                });
+            }
+            recipe.photo.data = fs.readFileSync(files.photo.path);
+            recipe.photo.contentType = files.photo.type;
+        }
+        console.log(recipe)
+        recipe.save((err, result) => {
+            if (err) {
+                return res.status(400).json({
+                    error: errorHandler(err)
+                });
+            }
+            res.json(result);
+        });
     });
 };

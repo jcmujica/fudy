@@ -5,6 +5,7 @@ import Profile from '../components/Profile';
 import Liked from '../components/Liked';
 import Ingredient from '../components/Ingredient';
 import Recipe from '../components/Recipe';
+import RecipeList from '../components/Recipe/RecipeList';
 
 function MainLayout(props) {
     const [activeComponent, setActiveComponent] = useState('liked');
@@ -17,6 +18,8 @@ function MainLayout(props) {
                 return <Liked />
             case 'recipe':
                 return <Recipe />
+            case 'myrecipes':
+                return <RecipeList />
             case 'ingredient':
                 return <Ingredient />
             default:

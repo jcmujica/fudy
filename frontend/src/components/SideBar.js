@@ -20,6 +20,7 @@ function SideBar(props) {
             </p>
             <ul className="menu-list">
                 <li><a onClick={() => handleComponentDisplay('likes')}>Liked</a></li>
+                <li><a onClick={() => handleComponentDisplay('myrecipes')}>MyRecipes</a></li>
                 <li><a onClick={() => handleComponentDisplay('recipe')}>Create</a></li>
             </ul>
             <p className="menu-label">

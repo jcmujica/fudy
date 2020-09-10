@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { isAuthenticated } from "../../auth";
-import { getIngredients, createRecipes } from "../../core/apiCore";
+import { getIngredients, createRecipes, getRecipeById } from "../../core/apiCore";
 import Loader from '../Loader';
 
 function CreateRecipe(props) {
-    const { mode } = props;
+    const { mode, recipeId } = props;
     const userId = isAuthenticated() && isAuthenticated().user._id;
     const token = isAuthenticated() && isAuthenticated().token;
     const [values, setValues] = useState({
@@ -29,27 +29,43 @@ function CreateRecipe(props) {
     ];
 
     useEffect(() => {
-        setValues({
-            ...values,
-            formData: new FormData()
-        });
         getIngredients()
             .then(res => {
                 setAllIngredients(res)
                 setShownIngredients(res)
+            });
+        if (mode === 'create') {
+            setValues({
+                ...values,
+                formData: new FormData()
+            });
+        } else if (mode === 'edit' && recipeId) {
+            getRecipeById(recipeId).then(res => {
+                mapEditValuesToLocal(res)
             })
+        }
     }, []);
 
     useEffect(() => {
-        const idsAlreadyAdded = recipeIngredients.map(el => el.id);
-        const filteredIngredients = allIngredients.filter(el => !idsAlreadyAdded.includes(el._id));
-        setShownIngredients(filteredIngredients);
-    }, [recipeIngredients]);
+        if (recipeIngredients.length > 0) {
+
+            const idsAlreadyAdded = recipeIngredients.map(el => el._id);
+            console.log(idsAlreadyAdded)
+            console.log(allIngredients)
+            const filteredIngredients = allIngredients.filter(el => !idsAlreadyAdded.includes(el._id));
+            setShownIngredients(filteredIngredients);
+        };
+    }, [recipeIngredients, allIngredients]);
+
+    const mapEditValuesToLocal = (recipe) => {
+        setValues({ ...values, name: recipe.name, instructions: recipe.instructions });
+        setRecipeIngredients(recipe.ingredients);
+    };
 
     const handleChange = (name, id) => event => {
         const value = name === "photo" ? event.target.files[0] : event.target.value;
         if (name === "unit" || name === "amount") {
-            const foundIndex = recipeIngredients.findIndex(ingredient => ingredient.id === id);
+            const foundIndex = recipeIngredients.findIndex(ingredient => ingredient._id === id);
             if (foundIndex >= 0) {
                 const copyIngredients = [...recipeIngredients];
                 copyIngredients[foundIndex][name] = value;
@@ -74,7 +90,6 @@ function CreateRecipe(props) {
             formData.set(field.name, values[field.name]);
         });
         formData.set('user', userId);
-        console.log('FORM DATA', formData)
     };
 
     const addIngredient = (id) => {
@@ -82,7 +97,7 @@ function CreateRecipe(props) {
         setRecipeIngredients([...recipeIngredients,
         {
             name: foundIngredient.name,
-            id: id,
+            _id: id,
             amount: 0,
             unit: ''
         }]);
@@ -122,7 +137,7 @@ function CreateRecipe(props) {
     const findIngredientValue = (id, value) => {
         console.log(id)
         console.log('values', values)
-        const foundIngredient = recipeIngredients.find(ingredient => ingredient.id === id);
+        const foundIngredient = recipeIngredients.find(ingredient => ingredient._id === id);
         return foundIngredient[value];
     };
 
@@ -131,7 +146,7 @@ function CreateRecipe(props) {
     };
 
     const deleteIngredientHandler = (id) => {
-        const clearedIngredientsOnList = recipeIngredients.filter(ingredient => ingredient.id !== id);
+        const clearedIngredientsOnList = recipeIngredients.filter(ingredient => ingredient._id !== id);
         setRecipeIngredients(clearedIngredientsOnList);
     };
 
@@ -171,7 +186,7 @@ function CreateRecipe(props) {
                         </div>
                         <div className="field is-centered auth__submit">
                             <div className="control">
-                                <button type="submit" className="button is-link is-size-6">Create Recipe</button>
+                                <button type="submit" className="button is-link is-size-6">{mode === 'edit' ? 'Edit Recipe' : 'Create Recipe'}</button>
                             </div>
                         </div>
                         <table className="table is-bordered is-striped is-narrow is-hoverable">
@@ -185,17 +200,17 @@ function CreateRecipe(props) {
                             </thead>
                             <tbody>
                                 {recipeIngredients.map((ingredient) => (
-                                    <tr key={ingredient.id}>
+                                    <tr key={ingredient._id}>
                                         <td>{ingredient.name}</td>
-                                        <td><input type="number" value={ingredient.amount} onChange={handleChange('amount', ingredient.id)} /></td>
+                                        <td><input type="number" value={ingredient.amount} onChange={handleChange('amount', ingredient._id)} /></td>
                                         <td>
-                                            <select value={ingredient.unit} onChange={handleChange('unit', ingredient.id)} required>
+                                            <select value={ingredient.unit} onChange={handleChange('unit', ingredient._id)} required>
                                                 {allUnits.map(unit => (
                                                     <option>{unit.value}</option>
                                                 ))}
                                             </select>
                                         </td>
-                                        <td onClick={() => deleteIngredientHandler(ingredient.id)}>X</td>
+                                        <td onClick={() => deleteIngredientHandler(ingredient._id)}>X</td>
                                     </tr>
                                 ))}
                             </tbody>

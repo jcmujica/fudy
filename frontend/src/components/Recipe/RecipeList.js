@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { getRecipes } from "../../core/apiCore";
+import { getUserRecipes } from "../../core/apiCore";
+import { isAuthenticated } from "../../auth";
 import RecipeForm from "./RecipeForm";
 import Loader from '../Loader';
 
 function RecipeList() {
     const [recipes, setRecipes] = useState([]);
     const [activeRecipeId, setActiveRecipeId] = useState('');
+    const userId = isAuthenticated() && isAuthenticated().user._id;
 
     useEffect(() => {
-        getRecipes().then(res => {
+        getUserRecipes(userId).then(res => {
             setRecipes(res);
         });
     }, []);

@@ -21,6 +21,16 @@ export const getRecipes = () => {
         .catch(err => console.log(err));
 };
 
+export const getUserRecipes = (userId) => {
+    return fetch(`${API}/recipes/user/${userId}`, {
+        method: "GET"
+    })
+        .then(response => {
+            return response.json();
+        })
+        .catch(err => console.log(err));
+};
+
 export const createIngredients = (userId, token, ingredientData) => {
     return fetch(`${API}/ingredient/create/${userId}`, {
         method: "POST",
@@ -80,8 +90,38 @@ export const updateIngredient = (ingredientId, userId, token, ingredientData) =>
         .catch(err => console.log(err));
 };
 
+export const updateRecipe = (redipeId, userId, token, ingredientData) => {
+    return fetch(`${API}/recipe/${redipeId}/${userId}`, {
+        method: "PUT",
+        headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`
+        },
+        body: ingredientData
+    })
+        .then(response => {
+            return response.json();
+        })
+        .catch(err => console.log(err));
+};
+
 export const deleteIngredient = (ingredientId, userId, token) => {
     return fetch(`${API}/ingredient/${ingredientId}/${userId}`, {
+        method: "DELETE",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+        }
+    })
+        .then(response => {
+            return response.json();
+        })
+        .catch(err => console.log(err));
+};
+
+export const deleteRecipe = (recipeId, userId, token) => {
+    return fetch(`${API}/ingredient/${recipeId}/${userId}`, {
         method: "DELETE",
         headers: {
             Accept: "application/json",

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { isAuthenticated } from "../../auth";
-import { getIngredients, createRecipes, getRecipeById } from "../../core/apiCore";
+import { getIngredients, createRecipes, getRecipeById, updateRecipe } from "../../core/apiCore";
 import Loader from '../Loader';
 
 function CreateRecipe(props) {
@@ -8,11 +8,12 @@ function CreateRecipe(props) {
     const userId = isAuthenticated() && isAuthenticated().user._id;
     const token = isAuthenticated() && isAuthenticated().token;
     const [values, setValues] = useState({
-        formData: ""
+        formData: new FormData()
     });
     const [allIngredients, setAllIngredients] = useState([]);
     const [shownIngredients, setShownIngredients] = useState([]);
     const [recipeIngredients, setRecipeIngredients] = useState([]);
+    const [selectedRecipeId, setSelectedRecipeId] = useState([]);
     const { formData } = values;
     const fields = [
         { type: 'text', name: 'name', placeholder: 'Name', required: true },
@@ -34,24 +35,26 @@ function CreateRecipe(props) {
                 setAllIngredients(res)
                 setShownIngredients(res)
             });
-        if (mode === 'create') {
-            setValues({
-                ...values,
-                formData: new FormData()
-            });
-        } else if (mode === 'edit' && recipeId) {
-            getRecipeById(recipeId).then(res => {
-                mapEditValuesToLocal(res)
-            })
-        }
+        // // if (mode === 'create') {
+        //     setValues({
+        //         ...values,
+        //         formData: new FormData()
+        //     });
+        // }
     }, []);
 
     useEffect(() => {
-        if (recipeIngredients.length > 0) {
+        if (mode !== 'create') {
+            getRecipeById(recipeId).then(res => {
+                mapEditValuesToLocal(res)
+            })
+            setSelectedRecipeId(recipeId);
+        }
+    }, [recipeId])
 
+    useEffect(() => {
+        if (recipeIngredients && recipeIngredients.length > 0) {
             const idsAlreadyAdded = recipeIngredients.map(el => el._id);
-            console.log(idsAlreadyAdded)
-            console.log(allIngredients)
             const filteredIngredients = allIngredients.filter(el => !idsAlreadyAdded.includes(el._id));
             setShownIngredients(filteredIngredients);
         };
@@ -94,13 +97,13 @@ function CreateRecipe(props) {
 
     const addIngredient = (id) => {
         const foundIngredient = findIngredient(id);
-        setRecipeIngredients([...recipeIngredients,
-        {
+        const newIngredient = {
             name: foundIngredient.name,
             _id: id,
             amount: 0,
             unit: ''
-        }]);
+        }
+        setRecipeIngredients([...recipeIngredients, newIngredient]);
     };
 
     const findIngredient = (id) => {
@@ -122,15 +125,15 @@ function CreateRecipe(props) {
                     }
                 });
         } else {
-            // updateRecipe(selectedRecipe._id, userId, token, formData)
-            // .then(data => {
-            //         if(data.error) {
-            //             setValues({ ...values, error: data.error, loading: false });
-            //         } else {
-            //             console.log(data);
-            //         }
-            //     }
-            // );
+            updateRecipe(selectedRecipeId, userId, token, formData)
+                .then(data => {
+                    if (data.error) {
+                        setValues({ ...values, error: data.error, loading: false });
+                    } else {
+                        console.log(data);
+                    }
+                }
+                );
         }
     };
 
@@ -199,7 +202,7 @@ function CreateRecipe(props) {
                                 </tr>
                             </thead>
                             <tbody>
-                                {recipeIngredients.map((ingredient) => (
+                                {recipeIngredients && recipeIngredients.map((ingredient) => (
                                     <tr key={ingredient._id}>
                                         <td>{ingredient.name}</td>
                                         <td><input type="number" value={ingredient.amount} onChange={handleChange('amount', ingredient._id)} /></td>

@@ -4,6 +4,9 @@ import { signout, isAuthenticated } from "../auth";
 
 function NavBar(props) {
     const { history } = props;
+    const { user } = isAuthenticated();
+    const isAdmin = user && user.role === 1 ? true : false;
+
     return (
         <nav className="navbar is-fixed-top" role="navigation" aria-label="main navigation">
             <div className="navbar-brand">
@@ -25,7 +28,7 @@ function NavBar(props) {
             </div> */}
 
             <div className="navbar-end">
-                {!isAuthenticated() ? (
+                {!user ? (
                     <>
                         <div className="navbar-item">
                             <div className="buttons">
@@ -46,6 +49,9 @@ function NavBar(props) {
                     </>
                 ) : (
                         <>
+                            <div className="navbar-item">
+                                <Link to={isAdmin ? '/admin/dashboard' : '/user/dashboard'}>MyFudy</Link>
+                            </div>
                             <div className="navbar-item">
                                 <div className="buttons">
                                     <span

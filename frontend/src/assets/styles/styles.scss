@@ -94,6 +94,7 @@ body,
 
 .menu {
     &__container {
+        z-index: 1000;
         padding-top: 120px;
         background-color: $white;
         display: flex;

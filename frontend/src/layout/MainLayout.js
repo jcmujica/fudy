@@ -33,6 +33,7 @@ function MainLayout(props) {
             <div className="column menu__container is-2">
                 <SideBar
                     setActiveComponent={setActiveComponent}
+                    activeComponent={activeComponent}
                 />
             </div>
             <div className="container">

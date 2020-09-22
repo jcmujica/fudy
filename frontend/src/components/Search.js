@@ -60,7 +60,7 @@ function Search(props) {
             />
             {searchEntries && searchEntries.length > 0 ?
                 <button
-                    className="button is-link is-rounded"
+                    className="button is-link is-rounded is-medium ml-4"
                     onClick={searchData}
                 >
                     Search!
@@ -68,7 +68,7 @@ function Search(props) {
                 null}
             <div>
                 {searchEntries && searchEntries.map(searchEntry => (
-                    <span className="home__searchEntry" onClick={() => deleteEntry(searchEntry)} key={searchEntry}>{searchEntry}</span>
+                    <span className="tag is-medium home__searchEntry" onClick={() => deleteEntry(searchEntry)} key={searchEntry}>{searchEntry}</span>
                 ))}
             </div>
             {searchResults.length > 0 ?

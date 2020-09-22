@@ -1,14 +1,13 @@
 import React from 'react';
-import { signout, isAuthenticated } from "../auth";
+import { isAuthenticated } from "../auth";
 
 function Profile() {
     const { user } = isAuthenticated();
 
     return (
         <>
-            <div>{user.firstName}</div>
-            <div>{user.lastName}</div>
-            <div>{user.email}</div>
+            <h2 className="title mb-6">{`Name: ${user.firstName} ${user.lastName}`}</h2>
+            <h3 className="subtitle">{`Email: ${user.email}`}</h3>
         </>
     )
 }

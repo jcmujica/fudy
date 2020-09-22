@@ -13,7 +13,7 @@ function RecipeList() {
         getUserRecipes(userId).then(res => {
             setRecipes(res);
         });
-    }, []);
+    }, [userId]);
 
     const editRecipe = (id) => {
         setActiveRecipeId(id)
@@ -30,6 +30,7 @@ function RecipeList() {
                     />
                 </div>
             }
+            <h2 className="title">My Recipes</h2>
             <table className="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                 <thead>
                     <tr>

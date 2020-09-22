@@ -41,26 +41,30 @@ function ListIngredients(props) {
     };
 
     return (
-        <table className="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-            <thead>
-                <tr>
-                    <th className="is-narrow">Ingredient</th>
-                    <th>Type</th>
-                    <th>Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-                {ingredients ?
-                    ingredients.map((ingredient => (
-                        <tr onClick={editIngredient} id={ingredient._id} key={ingredient._id}>
-                            <th className="is-narrow">{ingredient.name}</th>
-                            <td>{ingredient.origin}</td>
-                            <td onClick={deleteIngredientHandler} id={ingredient._id}>X</td>
-                        </tr>
-                    )))
-                    : <Loader />}
-            </tbody>
-        </table>)
+        <>
+        <h2 className="title">All Ingredients</h2>
+            <table className="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                <thead>
+                    <tr>
+                        <th className="is-narrow">Ingredient</th>
+                        <th>Type</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {ingredients ?
+                        ingredients.map((ingredient => (
+                            <tr onClick={editIngredient} id={ingredient._id} key={ingredient._id}>
+                                <th className="is-narrow">{ingredient.name}</th>
+                                <td>{ingredient.origin}</td>
+                                <td onClick={deleteIngredientHandler} id={ingredient._id}>X</td>
+                            </tr>
+                        )))
+                        : <Loader />}
+                </tbody>
+            </table>
+        </>
+    )
 };
 
 export default ListIngredients;

@@ -71,6 +71,14 @@ exports.read = (req, res) => {
     return res.json(req.ingredient);
 };
 
+exports.photo = (req, res, next) => {
+    if (req.ingredient.photo.data) {
+        res.set("Content-Type", req.ingredient.photo.contentType);
+        return res.send(req.ingredient.photo.data);
+    }
+    next();
+};
+
 exports.update = (req, res) => {
     let form = new formidable.IncomingForm();
     form.keepExtensions = true;

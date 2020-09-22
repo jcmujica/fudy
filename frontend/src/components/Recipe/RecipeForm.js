@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { isAuthenticated } from "../../auth";
 import { getIngredients, createRecipes, getRecipeById, updateRecipe } from "../../core/apiCore";
 import Loader from '../Loader';
+import ShowImage from '../ShowImage';
 
 function CreateRecipe(props) {
     const { mode, recipeId } = props;
@@ -35,12 +36,6 @@ function CreateRecipe(props) {
                 setAllIngredients(res)
                 setShownIngredients(res)
             });
-        // // if (mode === 'create') {
-        //     setValues({
-        //         ...values,
-        //         formData: new FormData()
-        //     });
-        // }
     }, []);
 
     useEffect(() => {
@@ -50,7 +45,7 @@ function CreateRecipe(props) {
             })
             setSelectedRecipeId(recipeId);
         }
-    }, [recipeId])
+    }, [recipeId, mode])
 
     useEffect(() => {
         if (recipeIngredients && recipeIngredients.length > 0) {
@@ -137,17 +132,6 @@ function CreateRecipe(props) {
         }
     };
 
-    const findIngredientValue = (id, value) => {
-        console.log(id)
-        console.log('values', values)
-        const foundIngredient = recipeIngredients.find(ingredient => ingredient._id === id);
-        return foundIngredient[value];
-    };
-
-    const findUnitValue = (unitString) => {
-        return allUnits.find(unit => unit.value === unitString);
-    };
-
     const deleteIngredientHandler = (id) => {
         const clearedIngredientsOnList = recipeIngredients.filter(ingredient => ingredient._id !== id);
         setRecipeIngredients(clearedIngredientsOnList);
@@ -155,8 +139,9 @@ function CreateRecipe(props) {
 
     return (
         <>
-            <div className="columns is-multiline">
+            <div className="columns is-multiline mb-2">
                 <div className="column is-9">
+                    <ShowImage item={selectedRecipeId} url="recipe" />
                     <form onSubmit={(e) => handleSubmit(e)}>
                         {fields.map(field => (
                             <div key={field.name} className="field is-horizontal">
@@ -180,7 +165,6 @@ function CreateRecipe(props) {
                                     <input className="file-input is-link" type="file" id="photo" onChange={handleChange("photo")} name="photo" accept="image/*"></input>
                                     <span className="file-cta">
                                         <span className="file-icon">
-                                            {/* <FontAwesomeIcon icon={[faUpload]} /> */}
                                         </span>
                                         <span className="file-label">Choose a file…</span>
                                     </span>
@@ -209,7 +193,7 @@ function CreateRecipe(props) {
                                         <td>
                                             <select value={ingredient.unit} onChange={handleChange('unit', ingredient._id)} required>
                                                 {allUnits.map(unit => (
-                                                    <option>{unit.value}</option>
+                                                    <option key={unit.value}>{unit.value}</option>
                                                 ))}
                                             </select>
                                         </td>
@@ -221,6 +205,7 @@ function CreateRecipe(props) {
                     </form>
                 </div>
                 <div className="column is-3">
+                    <h2 className="title">Add Ingredients</h2>
                     <table className="table is-bordered is-striped is-narrow is-hoverable">
                         <thead>
                             <tr>

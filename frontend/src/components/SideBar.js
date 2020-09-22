@@ -1,8 +1,8 @@
 import React from 'react';
-import { signout, isAuthenticated } from "../auth";
+import { isAuthenticated } from "../auth";
 
 function SideBar(props) {
-    const { setActiveComponent } = props;
+    const { setActiveComponent, activeComponent } = props;
 
     const handleComponentDisplay = (component) => {
         setActiveComponent(component)
@@ -18,15 +18,14 @@ function SideBar(props) {
                 Profile
             </p>
             <ul className="menu-list">
-                <li><a onClick={() => handleComponentDisplay('profile')}>My Profile</a></li>
+                <li><p className={`sidebar__link ${activeComponent === 'profile' ? 'sidebar__active' : ''}`} onClick={() => handleComponentDisplay('profile')}><i className="fas fa-user-alt ml-1 mr-2"></i>My Profile</p></li>
             </ul>
             <p className="menu-label">
                 Recipes
             </p>
             <ul className="menu-list">
-                <li><a onClick={() => handleComponentDisplay('likes')}>Liked</a></li>
-                <li><a onClick={() => handleComponentDisplay('myrecipes')}>MyRecipes</a></li>
-                <li><a onClick={() => handleComponentDisplay('recipe')}>Create</a></li>
+                <li><p className={`sidebar__link ${activeComponent === 'myrecipes' ? 'sidebar__active' : ''}`} onClick={() => handleComponentDisplay('myrecipes')}><i className="fas fa-star ml-1 mr-2"></i>MyRecipes</p></li>
+                <li><p className={`sidebar__link ${activeComponent === 'recipe' ? 'sidebar__active' : ''}`} onClick={() => handleComponentDisplay('recipe')}><i className="fas fa-utensils ml-1 mr-2"></i>Create</p></li>
             </ul>
             {isAdmin ?
                 <>
@@ -34,7 +33,7 @@ function SideBar(props) {
                         Ingredients
                     </p>
                     <ul className="menu-list">
-                        <li><a onClick={() => handleComponentDisplay('ingredient')}>Add</a></li>
+                        <li><p className={`sidebar__link ${activeComponent === 'ingredient' ? 'sidebar__active' : ''}`} onClick={() => handleComponentDisplay('ingredient')}><i className="fas fa-pepper-hot ml-1 mr-2"></i> Manage</p></li>
                     </ul>
                 </> : null}
         </aside>

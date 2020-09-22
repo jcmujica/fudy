@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { isAuthenticated } from "../../auth";
 import { createIngredients, getOriginValues, updateIngredient } from "../../core/apiCore";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ShowImage from '../ShowImage';
-// import { faUpload } from '@fontawesome/fontawesome-free-solid'
 
 function AddIngredient(props) {
 
@@ -96,7 +94,8 @@ function AddIngredient(props) {
         });
     };
 
-    const clear = () => {
+    const clear = (e) => {
+        e.preventDefault()
         setValues({
             ...values,
             name: '',
@@ -108,8 +107,8 @@ function AddIngredient(props) {
 
     return (
         <div>
-            {/* <ShowImage item={selectedIngredient} url="ingredient" /> */}
-            <form onSubmit={(e) => handleSubmit(e)}>
+            <ShowImage item={selectedIngredient} url="ingredient" />
+            <form className="mb-6" onSubmit={(e) => handleSubmit(e)}>
                 {fields.map(field => (
                     <div key={field.name} className="field is-horizontal">
                         <label className="field-label has-text-weight-bold auth__labels">{field.placeholder}</label>
@@ -153,11 +152,11 @@ function AddIngredient(props) {
                 </div>
                 <div className="field is-centered auth__submit">
                     <div className="control">
-                        <button type="submit" className="button is-link is-size-6">Create Ingredient</button>
+                        <button type="submit" className="button is-link is-size-6 mr-6">{mode === 'edit' ? 'Edit' : 'Create'} Ingredient</button>
+                        <button onClick={clear} className="button is-info is-size-6">Clear</button>
                     </div>
                 </div>
             </form>
-            <button onClick={clear} className="button is-info is-size-6">Clear</button>
         </div>
     )
 }

@@ -13,7 +13,7 @@ function SideBar(props) {
 
     return (
         <aside className="menu">
-            {user ? <span>Hi {user.firstName}!</span> : null}
+            {user ? <span>Hi {isAdmin ? 'Admin' : 'Chef'} {user.firstName}!</span> : null}
             <p className="menu-label">
                 Profile
             </p>

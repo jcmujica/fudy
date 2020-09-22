@@ -6,10 +6,9 @@ const {
     recipeById,
     read,
     update,
-    remove,
     listAll,
     listMine,
-    getOriginValues
+    listMatching
 } = require("../controllers/recipe");
 const { requireSignin, isAuth, isAdmin } = require("../controllers/auth");
 const { userById } = require("../controllers/user");
@@ -28,6 +27,7 @@ router.put("/recipe/:recipeId/:userId", requireSignin, isAuth, update);
 // );
 router.get("/recipes/user/:userId", listMine);
 router.get("/recipes", listAll);
+router.get("/recipes/search", listMatching);
 
 router.param("userId", userById);
 router.param("recipeId", recipeById);

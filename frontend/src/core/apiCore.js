@@ -1,5 +1,5 @@
 import { API } from "../config";
-// import queryString from "query-string";
+import queryString from "query-string";
 
 export const getIngredients = () => {
     return fetch(`${API}/ingredients`, {
@@ -23,6 +23,17 @@ export const getRecipes = () => {
 
 export const getUserRecipes = (userId) => {
     return fetch(`${API}/recipes/user/${userId}`, {
+        method: "GET"
+    })
+        .then(response => {
+            return response.json();
+        })
+        .catch(err => console.log(err));
+};
+
+export const getMatchingRecipes = params => {
+    const query = queryString.stringify(params);
+    return fetch(`${API}/recipes/search?${query}`, {
         method: "GET"
     })
         .then(response => {

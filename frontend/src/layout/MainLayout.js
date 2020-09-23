@@ -18,8 +18,6 @@ function MainLayout(props) {
                 return <Liked />
             case 'recipe':
                 return <Recipe />
-            case 'myrecipes':
-                return <RecipeList />
             case 'ingredient':
                 return <Ingredient />
             default:

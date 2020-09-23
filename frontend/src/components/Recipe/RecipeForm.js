@@ -5,7 +5,7 @@ import Loader from '../Loader';
 import ShowImage from '../ShowImage';
 
 function CreateRecipe(props) {
-    const { mode, recipeId } = props;
+    const { mode, selectedRecipe } = props;
     const userId = isAuthenticated() && isAuthenticated().user._id;
     const token = isAuthenticated() && isAuthenticated().token;
     const [values, setValues] = useState({
@@ -14,12 +14,12 @@ function CreateRecipe(props) {
     const [allIngredients, setAllIngredients] = useState([]);
     const [shownIngredients, setShownIngredients] = useState([]);
     const [recipeIngredients, setRecipeIngredients] = useState([]);
-    const [selectedRecipeId, setSelectedRecipeId] = useState([]);
     const { formData } = values;
     const fields = [
         { type: 'text', name: 'name', placeholder: 'Name', required: true },
         { type: 'textarea', name: 'instructions', placeholder: 'Instructions', required: true }
     ];
+
     const allUnits = [
         { value: '' },
         { value: 'Tea Spoon' },
@@ -33,19 +33,19 @@ function CreateRecipe(props) {
     useEffect(() => {
         getIngredients()
             .then(res => {
-                setAllIngredients(res)
-                setShownIngredients(res)
+                setAllIngredients(res);
+                setShownIngredients(res);
             });
     }, []);
 
     useEffect(() => {
         if (mode !== 'create') {
-            getRecipeById(recipeId).then(res => {
-                mapEditValuesToLocal(res)
-            })
-            setSelectedRecipeId(recipeId);
+            getRecipeById(selectedRecipe._id)
+                .then(res => {
+                    mapEditValuesToLocal(res)
+                });
         }
-    }, [recipeId, mode])
+    }, [mode, selectedRecipe])
 
     useEffect(() => {
         if (recipeIngredients && recipeIngredients.length > 0) {
@@ -70,6 +70,7 @@ function CreateRecipe(props) {
                 setRecipeIngredients(copyIngredients);
             }
         } else {
+            console.log(value)
             setValues({ ...values, [name]: value });
         }
     };
@@ -120,15 +121,14 @@ function CreateRecipe(props) {
                     }
                 });
         } else {
-            updateRecipe(selectedRecipeId, userId, token, formData)
+            updateRecipe(selectedRecipe._id, userId, token, formData)
                 .then(data => {
                     if (data.error) {
                         setValues({ ...values, error: data.error, loading: false });
                     } else {
                         console.log(data);
                     }
-                }
-                );
+                });
         }
     };
 
@@ -141,7 +141,7 @@ function CreateRecipe(props) {
         <>
             <div className="columns is-multiline mb-2">
                 <div className="column is-9">
-                    <ShowImage item={selectedRecipeId} url="recipe" />
+                    <ShowImage item={selectedRecipe} url="recipe" />
                     <form onSubmit={(e) => handleSubmit(e)}>
                         {fields.map(field => (
                             <div key={field.name} className="field is-horizontal">
@@ -188,7 +188,7 @@ function CreateRecipe(props) {
                             <tbody>
                                 {recipeIngredients && recipeIngredients.map((ingredient) => (
                                     <tr key={ingredient._id}>
-                                        <td>{ingredient.name}</td>
+                                        <td className="capitalize">{ingredient.name}</td>
                                         <td><input type="number" value={ingredient.amount} onChange={handleChange('amount', ingredient._id)} /></td>
                                         <td>
                                             <select value={ingredient.unit} onChange={handleChange('unit', ingredient._id)} required>
@@ -216,7 +216,7 @@ function CreateRecipe(props) {
                             {shownIngredients ?
                                 shownIngredients.map((ingredient => (
                                     <tr onClick={() => addIngredient(ingredient._id)} key={ingredient._id}>
-                                        <th className="is-narrow">{ingredient.name}</th>
+                                        <th className="is-narrow capitalize">{ingredient.name}</th>
                                     </tr>
                                 )))
                                 : <Loader />}

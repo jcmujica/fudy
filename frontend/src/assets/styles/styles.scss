@@ -146,7 +146,20 @@ tr {
     }
 }
 
-.ingredient {
+.ingredient, .recipe {
+    &__form {
+        border-bottom: 1px solid $white;
+        margin: 10px 0;
+        padding: 10px 0;
+        .title {
+            padding-left: 10px;
+        }
+    }
+    &__deleteButton {
+        &:hover {
+            background-color: #ff63477a;
+        }
+    }
     &__img {
         display: flex;
         justify-content: center;
@@ -154,6 +167,11 @@ tr {
         img {
             height: 150px;
         }
+    }
+    &__upload {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 5px;
     }
 }
 
@@ -172,4 +190,8 @@ tr {
         background-color: tomato;
         color: $white;
     }
+}
+
+.capitalize {
+    text-transform: capitalize;
 }

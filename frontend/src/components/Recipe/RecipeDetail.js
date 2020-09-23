@@ -43,9 +43,9 @@ function RecipeDetail(props) {
                                 <tbody>
                                     {selectedRecipe.ingredients && selectedRecipe.ingredients.map((ingredient) => (
                                         <tr key={ingredient._id}>
-                                            <td>{ingredient.name}</td>
+                                            <td className="capitalize">{ingredient.name}</td>
                                             <td>{ingredient.amount}</td>
-                                            <td>{ingredient.unit}</td>
+                                            <td className="capitalize">{ingredient.unit}</td>
                                         </tr>
                                     ))}
                                 </tbody>

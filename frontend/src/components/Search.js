@@ -37,6 +37,7 @@ function Search(props) {
                         if (response.error) {
                             console.log(response.error);
                         } else {
+                            console.log(response)
                             setSearchResults(response);
                         }
                     }
@@ -68,7 +69,7 @@ function Search(props) {
                 null}
             <div>
                 {searchEntries && searchEntries.map(searchEntry => (
-                    <span className="tag is-medium home__searchEntry" onClick={() => deleteEntry(searchEntry)} key={searchEntry}>{searchEntry}</span>
+                    <span className="tag is-medium home__searchEntry capitalize" onClick={() => deleteEntry(searchEntry)} key={searchEntry}>{searchEntry}</span>
                 ))}
             </div>
             {searchResults.length > 0 ?

@@ -8,12 +8,6 @@ const ingredientSchema = new mongoose.Schema(
             trim: true,
             type: String,
         },
-        searchName: {
-            maxlength: 32,
-            required: true,
-            trim: true,
-            type: String,
-        },
         origin: {
             default: "Other",
             enum: ["Animal", "Vegetable", "Other"],

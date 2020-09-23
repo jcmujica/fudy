@@ -3,9 +3,9 @@ import { isAuthenticated } from "../../auth";
 import { createIngredients, getOriginValues, updateIngredient } from "../../core/apiCore";
 import ShowImage from '../ShowImage';
 
-function AddIngredient(props) {
+function IngredientForm(props) {
 
-    const { setMode, mode, selectedIngredient } = props;
+    const { setMode, mode, selectedIngredient, setIngredientsUpdated } = props;
     const userId = isAuthenticated() && isAuthenticated().user._id;
     const token = isAuthenticated() && isAuthenticated().token;
     const fields = [
@@ -72,20 +72,20 @@ function AddIngredient(props) {
                     if (data.error) {
                         setValues({ ...values, error: data.error, loading: false });
                     } else {
-                        console.log(data);
+                        setIngredientsUpdated(true);
                     }
                 });
         } else {
             updateIngredient(selectedIngredient._id, userId, token, formData)
-            .then(data => {
-                    if(data.error) {
+                .then(data => {
+                    if (data.error) {
                         setValues({ ...values, error: data.error, loading: false });
                     } else {
-                        console.log(data);
+                        setIngredientsUpdated(true);
                     }
                 }
-            );
-        }
+                );
+        };
     };
 
     const beforeSubmit = () => {
@@ -106,15 +106,29 @@ function AddIngredient(props) {
     };
 
     return (
-        <div>
-            <ShowImage item={selectedIngredient} url="ingredient" />
+        <div className="ingredient__form">
+            <h2 className="title">{mode === 'edit' ? 'Edit' : 'Create'} Ingredient</h2>
+            <ShowImage item={selectedIngredient} url={mode === "edit" ? "ingredient" : ""} />
             <form className="mb-6" onSubmit={(e) => handleSubmit(e)}>
+                <div className="control field-body ingredient__upload">
+                    <div className="file is-dark">
+                        <label className="file-label">
+                            <input className="file-input is-link" type="file" id="photo" onChange={handleChange("photo")} name="photo" accept="image/*"></input>
+                            <span className="file-cta">
+                                <span className="file-icon">
+                                    <i className="fas fa-upload"></i>
+                                </span>
+                                <span className="file-label">Choose a file…</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
                 {fields.map(field => (
                     <div key={field.name} className="field is-horizontal">
                         <label className="field-label has-text-weight-bold auth__labels">{field.placeholder}</label>
                         <div className="control field-body">
                             <input
-                                className="input"
+                                className="input capitalize"
                                 name={field.name}
                                 value={values[field.name]}
                                 onChange={handleChange(field.name)}
@@ -137,19 +151,6 @@ function AddIngredient(props) {
                         </div>
                     </div>
                 </div>
-                <div className="control field-body">
-                    <div className="file">
-                        <label className="file-label">
-                            <input className="file-input is-link" type="file" id="photo" onChange={handleChange("photo")} name="photo" accept="image/*"></input>
-                            <span className="file-cta">
-                                <span className="file-icon">
-                                    {/* <FontAwesomeIcon icon={[faUpload]} /> */}
-                                </span>
-                                <span className="file-label">Choose a file…</span>
-                            </span>
-                        </label>
-                    </div>
-                </div>
                 <div className="field is-centered auth__submit">
                     <div className="control">
                         <button type="submit" className="button is-link is-size-6 mr-6">{mode === 'edit' ? 'Edit' : 'Create'} Ingredient</button>
@@ -161,4 +162,4 @@ function AddIngredient(props) {
     )
 }
 
-export default AddIngredient;
+export default IngredientForm;

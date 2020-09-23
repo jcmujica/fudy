@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { getUserRecipes } from "../../core/apiCore";
 import { isAuthenticated } from "../../auth";
-import RecipeForm from "./RecipeForm";
 import Loader from '../Loader';
 
-function RecipeList() {
+function RecipeList(props) {
+    const { setSelectedRecipe, setMode } = props;
     const [recipes, setRecipes] = useState([]);
-    const [activeRecipeId, setActiveRecipeId] = useState('');
     const userId = isAuthenticated() && isAuthenticated().user._id;
 
     useEffect(() => {
@@ -15,21 +14,13 @@ function RecipeList() {
         });
     }, [userId]);
 
-    const editRecipe = (id) => {
-        setActiveRecipeId(id)
+    const editRecipe = (recipe) => {
+        setSelectedRecipe(recipe);
+        setMode('edit');
     };
 
     return (
-        <>
-            {activeRecipeId &&
-                <div>
-                    <div>X</div>
-                    <RecipeForm
-                        mode={'edit'}
-                        recipeId={activeRecipeId}
-                    />
-                </div>
-            }
+        <div className="recipe__list">
             <h2 className="title">My Recipes</h2>
             <table className="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
                 <thead>
@@ -40,14 +31,14 @@ function RecipeList() {
                 <tbody>
                     {recipes ?
                         recipes.map((recipe => (
-                            <tr onClick={() => editRecipe(recipe._id)} id={recipe._id} key={recipe._id}>
+                            <tr onClick={() => editRecipe(recipe)} key={recipe._id}>
                                 <th className="is-narrow">{recipe.name}</th>
                             </tr>
                         )))
                         : <Loader />}
                 </tbody>
             </table>
-        </>
+        </div>
     )
 }
 

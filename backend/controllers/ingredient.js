@@ -37,7 +37,7 @@ exports.create = (req, res) => {
                 error: "All fields are required"
             });
         } else {
-            fields.searchName = name.toLowerCase();
+            fields.name = name.toLowerCase();
         }
 
         let ingredient = new Ingredient(fields);

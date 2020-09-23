@@ -26,6 +26,10 @@ const RecipeSchema = new mongoose.Schema(
             required: true,
             maxlength: 10000
         },
+        photo: {
+            data: Buffer,
+            contentType: String
+        },
         ingredients: [IngredientListSchema],
         user: { type: ObjectId, ref: "User" }
     },

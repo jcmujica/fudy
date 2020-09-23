@@ -125,7 +125,6 @@ exports.listAll = (req, res) => {
 };
 
 exports.listMine = (req, res) => {
-    console.log(req)
     Recipe.find({ user: { $eq: req.params.userId } })
         .exec((err, data) => {
             if (err) {
@@ -146,7 +145,7 @@ exports.listMatching = (req, res) => {
 
     console.log(searchIngredients)
 
-    Recipe.find({ 'ingredients.searchName': { $in: searchIngredients }}  )
+    Recipe.find({ 'ingredients.name': { $in: searchIngredients }}  )
         .exec((err, recipe) => {
         if (err) {
             return res.status(400).json({

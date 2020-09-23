@@ -24,7 +24,6 @@ function SideBar(props) {
                 Recipes
             </p>
             <ul className="menu-list">
-                <li><p className={`sidebar__link ${activeComponent === 'myrecipes' ? 'sidebar__active' : ''}`} onClick={() => handleComponentDisplay('myrecipes')}><i className="fas fa-star ml-1 mr-2"></i>MyRecipes</p></li>
                 <li><p className={`sidebar__link ${activeComponent === 'recipe' ? 'sidebar__active' : ''}`} onClick={() => handleComponentDisplay('recipe')}><i className="fas fa-utensils ml-1 mr-2"></i>Create</p></li>
             </ul>
             {isAdmin ?

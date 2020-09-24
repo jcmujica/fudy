@@ -18,13 +18,13 @@ function SideBar(props) {
                 Profile
             </p>
             <ul className="menu-list">
-                <li><p className={`sidebar__link ${activeComponent === 'profile' ? 'sidebar__active' : ''}`} onClick={() => handleComponentDisplay('profile')}><i className="fas fa-user-alt ml-1 mr-2"></i>My Profile</p></li>
+                <li><p className={`sidebar__link ${activeComponent === 'profile' ? 'sidebar__active' : ''}`} onClick={() => handleComponentDisplay('profile')}><i className="fas fa-user-alt ml-2 mr-3"></i>My Profile</p></li>
             </ul>
             <p className="menu-label">
                 Recipes
             </p>
             <ul className="menu-list">
-                <li><p className={`sidebar__link ${activeComponent === 'recipe' ? 'sidebar__active' : ''}`} onClick={() => handleComponentDisplay('recipe')}><i className="fas fa-utensils ml-1 mr-2"></i>Create</p></li>
+                <li><p className={`sidebar__link ${activeComponent === 'recipe' ? 'sidebar__active' : ''}`} onClick={() => handleComponentDisplay('recipe')}><i className="fas fa-utensils ml-2 mr-3"></i>Manage</p></li>
             </ul>
             {isAdmin ?
                 <>
@@ -32,7 +32,7 @@ function SideBar(props) {
                         Ingredients
                     </p>
                     <ul className="menu-list">
-                        <li><p className={`sidebar__link ${activeComponent === 'ingredient' ? 'sidebar__active' : ''}`} onClick={() => handleComponentDisplay('ingredient')}><i className="fas fa-pepper-hot ml-1 mr-2"></i> Manage</p></li>
+                        <li><p className={`sidebar__link ${activeComponent === 'ingredient' ? 'sidebar__active' : ''}`} onClick={() => handleComponentDisplay('ingredient')}><i className="fas fa-pepper-hot ml-2 mr-3"></i>Manage</p></li>
                     </ul>
                 </> : null}
         </aside>

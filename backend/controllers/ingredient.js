@@ -4,24 +4,10 @@ const _ = require("lodash");
 const fs = require("fs");
 const { errorHandler } = require("../helpers/dbErrorHandler");
 
-exports.ingredientById = (req, res, next, id) => {
-    Ingredient.findById(id).exec((err, ingredient) => {
-        if (err || !ingredient) {
-            return res.status(400).json({
-                error: "Ingredient does not exist"
-            });
-        }
-        req.ingredient = ingredient;
-        next();
-    });
-};
-
 exports.create = (req, res) => {
     let form = new formidable.IncomingForm();
     form.keepExtensions = true;
     form.parse(req, (err, fields, files) => {
-        // console.log(req)
-
         if (err) {
             return res.status(400).json({
                 error: "Image could not be uploaded"
@@ -32,13 +18,13 @@ exports.create = (req, res) => {
             name,
         } = fields;
 
-        if ( !name ) {
+        if (!name) {
             return res.status(400).json({
                 error: "All fields are required"
             });
         } else {
             fields.name = name.toLowerCase();
-        }
+        };
 
         let ingredient = new Ingredient(fields);
 
@@ -96,7 +82,7 @@ exports.update = (req, res) => {
         // 1mb = 1000000
 
         if (files.photo) {
-            // console.log("FILES PHOTO: ", files.photo);
+            console.log("FILES PHOTO: ", files.photo);
             if (files.photo.size > 1000000) {
                 return res.status(400).json({
                     error: "Image should be less than 1mb in size"
@@ -115,6 +101,19 @@ exports.update = (req, res) => {
             res.json(result);
         });
     });
+};
+
+exports.ingredientById = (req, res, next, id) => {
+    Ingredient.findById(id)
+        .exec((err, ingredient) => {
+            if (err || !ingredient) {
+                return res.status(400).json({
+                    error: "Ingredient does not exist"
+                });
+            }
+            req.ingredient = ingredient;
+            next();
+        });
 };
 
 exports.remove = (req, res) => {

@@ -1,7 +1,7 @@
+const { Recipe } = require("../models/recipe");
 const formidable = require("formidable");
 const _ = require("lodash");
 const fs = require("fs");
-const { Recipe } = require("../models/recipe");
 const { errorHandler } = require("../helpers/dbErrorHandler");
 
 exports.create = (req, res) => {
@@ -25,6 +25,8 @@ exports.create = (req, res) => {
             return res.status(400).json({
                 error: "All fields are required"
             });
+        } else {
+            fields.name = name.toLowerCase();
         };
 
         fields.ingredients = JSON.parse(ingredients);
@@ -41,7 +43,6 @@ exports.create = (req, res) => {
             recipe.photo.data = fs.readFileSync(files.photo.path);
             recipe.photo.contentType = files.photo.type;
         }
-        console.log(recipe)
         recipe.save((err, result) => {
             if (err) {
                 return res.status(400).json({
@@ -51,6 +52,14 @@ exports.create = (req, res) => {
             res.json(result);
         });
     });
+};
+
+exports.photo = (req, res, next) => {
+    if (req.recipe.photo.data) {
+        res.set("Content-Type", req.recipe.photo.contentType);
+        return res.send(req.recipe.photo.data);
+    }
+    next();
 };
 
 exports.update = (req, res) => {
@@ -73,7 +82,7 @@ exports.update = (req, res) => {
         // 1mb = 1000000
 
         if (files.photo) {
-            // console.log("FILES PHOTO: ", files.photo);
+            console.log("FILES PHOTO: ", files.photo);
             if (files.photo.size > 1000000) {
                 return res.status(400).json({
                     error: "Image should be less than 1mb in size"
@@ -94,7 +103,6 @@ exports.update = (req, res) => {
     });
 };
 
-
 exports.recipeById = (req, res, next, id) => {
     Recipe.findById(id)
         .exec((err, recipe) => {
@@ -106,6 +114,20 @@ exports.recipeById = (req, res, next, id) => {
             req.recipe = recipe;
             next();
         });
+};
+
+exports.remove = (req, res) => {
+    const recipe = req.recipe;
+    recipe.remove((err, data) => {
+        if (err) {
+            return res.status(400).json({
+                error: errorHandler(err)
+            });
+        }
+        res.json({
+            message: "Recipe deleted"
+        });
+    });
 };
 
 exports.read = (req, res) => {
@@ -145,13 +167,13 @@ exports.listMatching = (req, res) => {
 
     console.log(searchIngredients)
 
-    Recipe.find({ 'ingredients.name': { $in: searchIngredients }}  )
+    Recipe.find({ 'ingredients.name': { $in: searchIngredients } })
         .exec((err, recipe) => {
-        if (err) {
-            return res.status(400).json({
-                error: "Recipe not found"
-            });
-        }
-        res.json(recipe);
-    });
+            if (err) {
+                return res.status(400).json({
+                    error: "Recipe not found"
+                });
+            }
+            res.json(recipe);
+        });
 };

@@ -132,7 +132,7 @@ export const deleteIngredient = (ingredientId, userId, token) => {
 };
 
 export const deleteRecipe = (recipeId, userId, token) => {
-    return fetch(`${API}/ingredient/${recipeId}/${userId}`, {
+    return fetch(`${API}/recipe/${recipeId}/${userId}`, {
         method: "DELETE",
         headers: {
             Accept: "application/json",

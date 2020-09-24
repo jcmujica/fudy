@@ -23,6 +23,7 @@ function Home() {
                         />
                         <RecipeDetail
                             recipe={recipe}
+                            setRecipe={setRecipe}
                         />
                     </div>
                 </div>

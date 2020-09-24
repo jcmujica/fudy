@@ -116,6 +116,9 @@ tr {
 
 .home {
     width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
     text-align: center;
     h1 {
         font-size: 5em;
@@ -134,7 +137,9 @@ tr {
     }
     &__searchButton {
         margin-left: 20px;
-        transition: cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    &__searchTable {
+        margin-top: 20px;
     }
 }
 

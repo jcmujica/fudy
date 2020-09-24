@@ -29,7 +29,6 @@ function Search(props) {
     };
 
     const searchData = () => {
-        console.log(searchEntries);
         if (searchEntries) {
             getMatchingRecipes({ search: searchEntries })
                 .then(
@@ -37,7 +36,6 @@ function Search(props) {
                         if (response.error) {
                             console.log(response.error);
                         } else {
-                            console.log(response)
                             setSearchResults(response);
                         }
                     }
@@ -59,21 +57,21 @@ function Search(props) {
                 onChange={handleSearchInput}
                 onKeyUp={handleEnter}
             />
-            {searchEntries && searchEntries.length > 0 ?
-                <button
-                    className="button is-link is-rounded is-medium ml-4"
-                    onClick={searchData}
-                >
-                    Search!
-                </button> :
-                null}
+
+            <button
+                className={`button is-link is-rounded is-medium ml-4`}
+                disabled={searchEntries && searchEntries.length > 0 ? false : true}
+                onClick={searchData}
+            >
+                Search!
+                </button>
             <div>
                 {searchEntries && searchEntries.map(searchEntry => (
                     <span className="tag is-medium home__searchEntry capitalize" onClick={() => deleteEntry(searchEntry)} key={searchEntry}>{searchEntry}</span>
                 ))}
             </div>
             {searchResults.length > 0 ?
-                <table className="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                <table className="table is-bordered is-striped is-narrow is-hoverable is-fullwidth home__searchTable">
                     <thead>
                         <tr>
                             <th className="is-narrow">Recipe</th>
@@ -83,7 +81,7 @@ function Search(props) {
                         {searchResults ?
                             searchResults.map((recipe => (
                                 <tr key={recipe._id} onClick={() => handleRecipeSelect(recipe)}>
-                                    <th className="is-narrow">{recipe.name}</th>
+                                    <th className="is-narrow capitalize">{recipe.name}</th>
                                 </tr>
                             )))
                             : <Loader />}

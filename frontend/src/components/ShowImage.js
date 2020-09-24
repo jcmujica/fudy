@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { API } from "../config";
 import fallbackImg from '../assets/img/food.png';
 
-const ShowImage = ({ item, url }) => {
+const ShowImage = ({ item, url, photoPreview }) => {
     const [source, setsource] = useState('');
 
     const fallbackImage = (e) => {
@@ -10,17 +10,20 @@ const ShowImage = ({ item, url }) => {
     };
 
     useEffect(() => {
-        setsource(`${API}/${url}/photo/${url === "recipe" ? item : item._id}`)
+        console.log('item', `${API}/${url}/photo/${item._id}`)
+        setsource(`${API}/${url}/photo/${item._id}`)
     }, [url, item]);
+
+    const image = () => {
+        console.log(photoPreview)
+        return !photoPreview ?
+            <img src={source} onError={fallbackImage} alt={item.name} /> :
+            <img src={photoPreview} alt="preview" />
+    }
 
     return (
         <div className="ingredient__img">
-            {item &&
-                <img
-                    src={source}
-                    onError={fallbackImage}
-                    alt={item.name}
-                />}
+            {item && image()}
         </div>
     )
 };

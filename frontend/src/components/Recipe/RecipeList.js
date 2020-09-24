@@ -4,15 +4,17 @@ import { isAuthenticated } from "../../auth";
 import Loader from '../Loader';
 
 function RecipeList(props) {
-    const { setSelectedRecipe, setMode } = props;
+    const { setSelectedRecipe, setMode, recipesUpdated, setRecipesUpdated } = props;
     const [recipes, setRecipes] = useState([]);
     const userId = isAuthenticated() && isAuthenticated().user._id;
 
     useEffect(() => {
-        getUserRecipes(userId).then(res => {
-            setRecipes(res);
-        });
-    }, [userId]);
+        getUserRecipes(userId)
+            .then(res => {
+                setRecipes(res);
+                setRecipesUpdated(false);
+            });
+    }, [userId, recipesUpdated, setRecipesUpdated]);
 
     const editRecipe = (recipe) => {
         setSelectedRecipe(recipe);
@@ -32,7 +34,7 @@ function RecipeList(props) {
                     {recipes ?
                         recipes.map((recipe => (
                             <tr onClick={() => editRecipe(recipe)} key={recipe._id}>
-                                <th className="is-narrow">{recipe.name}</th>
+                                <th className="is-narrow capitalize">{recipe.name}</th>
                             </tr>
                         )))
                         : <Loader />}

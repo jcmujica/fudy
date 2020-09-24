@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { isAuthenticated } from "../../auth";
-import { getIngredients, createRecipes, getRecipeById, updateRecipe } from "../../core/apiCore";
+import { getIngredients, createRecipes, getRecipeById, updateRecipe, deleteRecipe } from "../../core/apiCore";
 import Loader from '../Loader';
 import ShowImage from '../ShowImage';
 
 function CreateRecipe(props) {
-    const { mode, selectedRecipe } = props;
+    const { mode, selectedRecipe, setRecipesUpdated, setMode } = props;
     const userId = isAuthenticated() && isAuthenticated().user._id;
     const token = isAuthenticated() && isAuthenticated().token;
     const [values, setValues] = useState({
-        formData: new FormData()
+        formData: new FormData(),
+        name: '',
+        instructions: '',
+        photoPreview: ''
     });
     const [allIngredients, setAllIngredients] = useState([]);
     const [shownIngredients, setShownIngredients] = useState([]);
@@ -70,9 +73,11 @@ function CreateRecipe(props) {
                 setRecipeIngredients(copyIngredients);
             }
         } else {
-            console.log(value)
             setValues({ ...values, [name]: value });
-        }
+            if (name === "photo") {
+                setValues({ ...values, [name]: value, photoPreview: URL.createObjectURL(value) });
+            }
+        };
     };
 
     const validateIngredientValues = (list) => {
@@ -80,14 +85,16 @@ function CreateRecipe(props) {
     };
 
     const beforeSubmit = () => {
+        console.log('values', values)
         if (!validateIngredientValues) {
             alert('All ingredients must contain all their respective values.');
             return;
         };
         formData.set('ingredients', JSON.stringify(recipeIngredients));
-        fields.map((field) => {
-            formData.set(field.name, values[field.name]);
-        });
+        fields.map((field) => (formData.set(field.name, values[field.name])));
+        if (values.photo) {
+            formData.set('photo', values.photo);
+        }
         formData.set('user', userId);
     };
 
@@ -117,6 +124,8 @@ function CreateRecipe(props) {
                     if (data.error) {
                         setValues({ ...values, error: data.error, loading: false });
                     } else {
+                        setRecipesUpdated(true);
+                        clear();
                         console.log(data);
                     }
                 });
@@ -126,6 +135,8 @@ function CreateRecipe(props) {
                     if (data.error) {
                         setValues({ ...values, error: data.error, loading: false });
                     } else {
+                        setRecipesUpdated(true);
+                        clear();
                         console.log(data);
                     }
                 });
@@ -137,18 +148,61 @@ function CreateRecipe(props) {
         setRecipeIngredients(clearedIngredientsOnList);
     };
 
+    const deleteRecipeHandler = (e) => {
+        e.stopPropagation();
+        deleteRecipe(selectedRecipe._id, userId, token)
+            .then(data => {
+                if (data.error) {
+                    console.log(data.error);
+                } else {
+                    setRecipesUpdated(true);
+                    clear();
+                    console.log(data);
+                }
+            });
+    };
+
+    const clear = (e) => {
+        if (e) {
+            e.preventDefault();
+        };
+        setValues({
+            ...values,
+            name: '',
+            instructions: '',
+            ingredients: '',
+            photoPreview: '',
+            formData: new FormData()
+        })
+        setMode('create');
+    };
+
     return (
         <>
             <div className="columns is-multiline mb-2">
-                <div className="column is-9">
-                    <ShowImage item={selectedRecipe} url="recipe" />
+                <div className="column is-10">
+                    <h2 className="title">{mode === 'edit' ? 'Edit Recipe' : 'Create Recipe'}</h2>
+                    <ShowImage item={selectedRecipe} url="recipe" photoPreview={values.photoPreview} />
                     <form onSubmit={(e) => handleSubmit(e)}>
+                        <div className="control field-body recipe__upload">
+                            <div className="file is-dark">
+                                <label className="file-label">
+                                    <input className="file-input is-link" type="file" id="photo" onChange={handleChange("photo")} name="photo" accept="image/*"></input>
+                                    <span className="file-cta">
+                                        <span className="file-icon">
+                                            <i className="fas fa-upload"></i>
+                                        </span>
+                                        <span className="file-label">Choose a file…</span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
                         {fields.map(field => (
                             <div key={field.name} className="field is-horizontal">
                                 <label className="field-label has-text-weight-bold auth__labels">{field.placeholder}</label>
                                 <div className="control field-body">
                                     <input
-                                        className="input"
+                                        className="input capitalize"
                                         name={field.name}
                                         value={values[field.name]}
                                         onChange={handleChange(field.name)}
@@ -159,21 +213,16 @@ function CreateRecipe(props) {
                                 </div>
                             </div>)
                         )}
-                        <div className="control field-body">
-                            <div className="file">
-                                <label className="file-label">
-                                    <input className="file-input is-link" type="file" id="photo" onChange={handleChange("photo")} name="photo" accept="image/*"></input>
-                                    <span className="file-cta">
-                                        <span className="file-icon">
-                                        </span>
-                                        <span className="file-label">Choose a file…</span>
-                                    </span>
-                                </label>
-                            </div>
-                        </div>
                         <div className="field is-centered auth__submit">
                             <div className="control">
                                 <button type="submit" className="button is-link is-size-6">{mode === 'edit' ? 'Edit Recipe' : 'Create Recipe'}</button>
+                                <button
+                                    type="button"
+                                    className="button is-primary is-size-6 ml-4"
+                                    onClick={deleteRecipeHandler}
+                                >
+                                    <i className="far fa-trash-alt"></i>
+                                </button>
                             </div>
                         </div>
                         <table className="table is-bordered is-striped is-narrow is-hoverable">
@@ -182,7 +231,7 @@ function CreateRecipe(props) {
                                     <th className="is-narrow">Ingredient</th>
                                     <th className="is-narrow">Amount</th>
                                     <th className="is-narrow">Unit</th>
-                                    <th className="is-narrow">Remove</th>
+                                    <th className="is-narrow has-text-centered">Remove</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -197,15 +246,20 @@ function CreateRecipe(props) {
                                                 ))}
                                             </select>
                                         </td>
-                                        <td onClick={() => deleteIngredientHandler(ingredient._id)}>X</td>
+                                        <td
+                                            onClick={() => deleteIngredientHandler(ingredient._id)}
+                                            className="is-narrow has-text-centered has-text-info recipe__deleteButton"
+                                        >
+                                            <i className="far fa-trash-alt"></i>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                     </form>
                 </div>
-                <div className="column is-3">
-                    <h2 className="title">Add Ingredients</h2>
+                <div className="column is-2">
+                    <h2 className="subtitle">Add Ingredients</h2>
                     <table className="table is-bordered is-striped is-narrow is-hoverable">
                         <thead>
                             <tr>

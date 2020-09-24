@@ -13,10 +13,13 @@ function Recipe() {
                 mode={mode}
                 setMode={setMode}
                 selectedRecipe={selectedRecipe}
+                setRecipesUpdated={setRecipesUpdated}
             />
             <RecipeList
                 setMode={setMode}
                 setSelectedRecipe={setSelectedRecipe}
+                recipesUpdated={recipesUpdated}
+                setRecipesUpdated={setRecipesUpdated}
             />
         </div>
     )

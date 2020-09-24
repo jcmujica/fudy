@@ -20,7 +20,7 @@ function ListIngredients(props) {
                 setIngredientsUpdated(false);
                 setIngredients(res);
             })
-    }, [ingredientsUpdated])
+    }, [ingredientsUpdated, setIngredientsUpdated, setIngredients])
 
     const editIngredient = (ingredient) => {
         setSelectedIngredient(ingredient);

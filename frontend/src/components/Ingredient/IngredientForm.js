@@ -16,6 +16,7 @@ function IngredientForm(props) {
         name: "",
         origin: 'Other',
         photo: "",
+        photoPreview: '',
         originList: [],
         mappedFields: ['name', 'origin', 'photo'],
         error: "",
@@ -54,10 +55,14 @@ function IngredientForm(props) {
 
     const handleChange = name => event => {
         const value = name === "photo" ? event.target.files[0] : event.target.value;
+
         if (name === "origin") {
             setValues({ ...values, origin: value });
         } else {
             setValues({ ...values, [name]: value });
+            if (name === "photo") {
+                setValues({ ...values, [name]: value, photoPreview: URL.createObjectURL(value) });
+            }
         }
     };
 
@@ -73,6 +78,7 @@ function IngredientForm(props) {
                         setValues({ ...values, error: data.error, loading: false });
                     } else {
                         setIngredientsUpdated(true);
+                        clear();
                     }
                 });
         } else {
@@ -82,6 +88,7 @@ function IngredientForm(props) {
                         setValues({ ...values, error: data.error, loading: false });
                     } else {
                         setIngredientsUpdated(true);
+                        clear();
                     }
                 }
                 );
@@ -89,17 +96,18 @@ function IngredientForm(props) {
     };
 
     const beforeSubmit = () => {
-        mappedFields.map((field) => {
-            formData.set(field, values[field]);
-        });
+        mappedFields.map((field) => (formData.set(field, values[field])));
     };
 
     const clear = (e) => {
-        e.preventDefault()
+        if (e) {
+            e.preventDefault();
+        }
         setValues({
             ...values,
             name: '',
             origin: '',
+            photoPreview: '',
             formData: new FormData()
         })
         setMode('create');
@@ -108,7 +116,7 @@ function IngredientForm(props) {
     return (
         <div className="ingredient__form">
             <h2 className="title">{mode === 'edit' ? 'Edit' : 'Create'} Ingredient</h2>
-            <ShowImage item={selectedIngredient} url={mode === "edit" ? "ingredient" : ""} />
+            <ShowImage item={selectedIngredient} url={mode === "edit" ? "ingredient" : ""} photoPreview={values.photoPreview} />
             <form className="mb-6" onSubmit={(e) => handleSubmit(e)}>
                 <div className="control field-body ingredient__upload">
                     <div className="file is-dark">

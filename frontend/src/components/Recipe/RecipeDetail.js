@@ -1,37 +1,36 @@
 import React, { useState, useEffect } from 'react';
+import ShowImage from '../ShowImage';
 
 function RecipeDetail(props) {
-    const { recipe } = props;
-    const [selectedRecipe, setSelectedRecipe] = useState({});
+    const { recipe, setRecipe } = props;
     const [active, setActive] = useState(false);
 
     useEffect(() => {
-        console.log(recipe)
         if (recipe) {
-            setSelectedRecipe(recipe);
             setActive(true);
         }
     }, [recipe]);
 
     const close = () => {
         setActive(false);
-        setSelectedRecipe({});
+        setRecipe({});
     };
 
     return (
         <>
-            {selectedRecipe._id ? <div className={'modal ' + (active ? 'is-active' : '')}>
+            {recipe._id ? <div className={'modal ' + (active ? 'is-active' : '')}>
                 <div className="modal-background"></div>
                 <div className="modal-card">
                     <header className="modal-card-head">
-                        <p className="modal-card-title">{selectedRecipe.name}</p>
+                        <p className="modal-card-title capitalize">{recipe.name}</p>
                         <button className="delete" aria-label="close" onClick={close}></button>
                     </header>
                     <section className="modal-card-body">
+                        <ShowImage item={recipe} url="recipe" />
                         <p className="has-text-dark">Instructions:</p>
-                        <p className="has-text-dark">{selectedRecipe.instructions}</p>
+                        <p className="has-text-dark">{recipe.instructions}</p>
                         <p>Ingredients:</p>
-                        {selectedRecipe.ingredients.length > 0 ?
+                        {recipe.ingredients.length > 0 ?
                             <table className="table is-bordered is-striped is-narrow is-hoverable">
                                 <thead>
                                     <tr>
@@ -41,7 +40,7 @@ function RecipeDetail(props) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {selectedRecipe.ingredients && selectedRecipe.ingredients.map((ingredient) => (
+                                    {recipe.ingredients && recipe.ingredients.map((ingredient) => (
                                         <tr key={ingredient._id}>
                                             <td className="capitalize">{ingredient.name}</td>
                                             <td>{ingredient.amount}</td>

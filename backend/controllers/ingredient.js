@@ -13,7 +13,6 @@ exports.create = (req, res) => {
                 error: "Image could not be uploaded"
             });
         }
-        // check for all fields
         const {
             name,
         } = fields;
@@ -27,9 +26,6 @@ exports.create = (req, res) => {
         };
 
         let ingredient = new Ingredient(fields);
-
-        // 1kb = 1000
-        // 1mb = 1000000
 
         if (files.photo) {
             console.log("FILES PHOTO: ", files.photo);
@@ -77,9 +73,6 @@ exports.update = (req, res) => {
 
         let ingredient = req.ingredient;
         ingredient = _.extend(ingredient, fields);
-
-        // 1kb = 1000
-        // 1mb = 1000000
 
         if (files.photo) {
             console.log("FILES PHOTO: ", files.photo);

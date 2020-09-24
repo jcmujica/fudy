@@ -1,5 +1,3 @@
-mchamorro@laescala.cl
-
 # Intruccciones:
 - Instalar las dependencias para cada lado del proyecto (backend y frontend).
 - Crear los archivos .env correspondientes en cada carpeta con las credenciales necesarias para conectar a la Base de Datos.
